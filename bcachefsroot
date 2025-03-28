@@ -1,125 +1,17 @@
-#!/usr/bin/bash
+#!/bin/sh
 
+build() { 
+        add_binary bcachefs
+	add_binary rsync
+	add_binary bash
+	add_module overlay
+	add_module loop
+	add_module vfat
+	add_runscript
+}
 
-run_latehook() {
-
-   real_root=/real_root
-   new_root=/new_root
-   mkdir -p $real_root $new_root
-
-	mnt=/mnt
-	root2='/@root'			# This is you default root where you'll be able to swap for other snapshots
-	snapshot_dir=/.snapshots
-	cd $mnt$snapshot_dir
-
-	#echo mount -m LABEL=ROOT2 $mnt
-	#echo mount --bind $mnt/@root /new_root
-
-
-	echo -e "\nWWWhat would you like to do?\n
-<s> boot into a snapshot
-<r> enter root '/' system
-<m> move snapshot
-<b> enter bash
-<> or timeout, enter /@root system\n"
-
-	#read -s -t 5 -n 1 key
-	read -s -n 1 key
-
-	if [[ "$key" = 's' ]]; then
-	
-		echo -e "\nType the name of the snapshot you would like to load.\n"
-		
-		ls
-
-		echo
-
-		read snapshot
-	
-		if [ -d "$snapshot" ]; then
-
-			umount $new_root
-			mount --bind "$mnt$snapshot_dir/$snapshot" $new_root
-			mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-
-		else
-			
-			echo -e "\nThe snapshot \'snapshot\' does not exist!\n"
-			
-			sleep 2
-
-			mount --bind $mnt $new_root
-			mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-
-		fi
-	
-	elif [ $key = 'r' ]; then
-	
-		umount $new_root
-		mount --bind $mnt $new_root
-		mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-
-	elif [ $key = 'm' ]; then
-
-		echo -e "\nType the name of the snapshot you would like to recover to @root.\n"
-		
-		ls
-
-		echo
-
-		read snapshot
-	
-		if [ -d "$snapshot" ]; then
-			
-			#mv $mnt$root2 $mnt$snapshot_dir/$root2_old
-			
-			umount $new_root
-
-			bcachefs subvolume delete /mnt/@root
-			rm -rf /mnt/@root
-
-			#echo bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" /mnt/@root
-			#bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" /mnt/@root
-
-			mv "$snapshot" $mnt$root2
-
-			mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-			mount --bind $mnt$root2 $new_root
-			mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-
-			bash
-
-		else
-			
-			echo -e "\nThe snapshot \'snapshot\' does not exist!\n"
-			
-			sleep 2
-
-			mount --bind $mnt $new_root
-			mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-
-		fi
-
-
-
-	elif [ $key = 'b' ]; then
-
-		echo "Entering bash..."
-		bash
-	
-	else
-		
-		echo "Booting default..."
-		sleep 1
-
-		umount $new_root
-		
-		mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-		mount --bind "$mnt$root2" $new_root
-		mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-
-
-	fi
-	
-
+help() {
+	cat << HELPEOF
+Rollback bcachefs
+HELPEOF
 }
