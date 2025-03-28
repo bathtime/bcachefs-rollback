@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 
-#						*** Make sure 'LABEL' matches your root system label !!! ***
+#			*** Make sure 'LABEL' matches your root system label !!! ***
 LABEL=ROOT2
 root2='/@root'			# This is your default root where you'll be able to swap for other snapshots
 
