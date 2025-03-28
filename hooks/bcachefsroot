@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 
-# MAKE SURE THIS LABEL MATCHES YOUR ROOT DRIVE LABEL!
+#						*** Make sure 'LABEL' matches your root system label !!! ***
 LABEL=ROOT2
 root2='/@root'			# This is your default root where you'll be able to swap for other snapshots
 
@@ -10,9 +10,9 @@ run_latehook() {
 
 	#/usr/lib/initcpio/init
 
-   real_root=/real_root
-   new_root=/new_root
-   mkdir -p $real_root $new_root
+	real_root=/real_root
+	new_root=/new_root
+	mkdir -p $real_root $new_root
 
 	mnt=/mnt
 	snapshot_dir=/.snapshots
@@ -21,25 +21,20 @@ run_latehook() {
 	
 	cd $mnt$snapshot_dir
 
-	#echo mount -m LABEL=ROOT2 $mnt
-	#echo mount --bind $mnt/@root /new_root
-
-
-	echo -e "\nWWWhat would you like to do?\n
+	echo -e "\nWhat would you like to do?\n
 <s> boot into a snapshot
-<r> enter root '/' system
+<r> boot main root system
 <m> move snapshot
 <b> enter bash
-<> or timeout, enter /@root system\n"
+<ENTER> boot /@root system\n"
 
-	#read -s -t 5 -n 1 key
-	read -s -n 1 key
+	read -s -t 15 -n 1 key
 
 	if [[ "$key" = 's' ]]; then
 	
 		echo -e "\nType the name of the snapshot you would like to load.\n"
 		
-		ls
+		ls "$mnt$snapshot_dir"
 
 		echo
 
@@ -122,7 +117,7 @@ run_latehook() {
 	
 	else
 		
-		echo "Booting default..."
+		echo "Booting default (/@root)..."
 		sleep 1
 
 		umount $new_root
