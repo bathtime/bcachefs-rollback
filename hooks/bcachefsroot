@@ -62,13 +62,13 @@ run_latehook() {
 
 		fi
 	
-	elif [ $key = 'r' ]; then
+	elif [[ "$key" = 'r' ]]; then
 	
 		umount $new_root
 		mount --bind $mnt $new_root
 		mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 
-	elif [ $key = 'm' ]; then
+	elif [[ "$key" = 'm' ]]; then
 
 		echo -e "\nType the name of the snapshot you would like to recover to @root.
 (Names must not contain any spaces!)\n"
@@ -115,7 +115,7 @@ run_latehook() {
 
 
 
-	elif [ $key = 'b' ]; then
+	elif [[ "$key" = 'b' ]]; then
 
 		echo "Entering bash..."
 		bash
