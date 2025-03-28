@@ -14,6 +14,10 @@ Copy the bcachefsroot install file to /usr/lib/initcpio/install/
 
 .
 
+Edit /usr/lib/initcpio/hooks/bcachefsroot and make sure that the variable LABEL is set to your root partition label
+
+.
+
 Edit /etc/mkinitcpio.conf to include the 'bcachefsroot' hook and 'bcachefs' module:
 
 MODULES=(bcachefs)
