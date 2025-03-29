@@ -1,5 +1,7 @@
 Please note that this is experimental and only for use on non-producion machines by those who have read and understand all this code. This has only been tested on my own system. Chances are extremely high that your system may be borked.
 
+All are welcome to use/modify this code, but please let me know of the changes you make so I can improve my script as well. Thanks!
+
 # bcachefs-rollback
 This program is a mkinitcpio hook that allows booting into snapshots and rollback on bcachefs
 
