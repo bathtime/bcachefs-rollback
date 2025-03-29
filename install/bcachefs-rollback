@@ -1,0 +1,13 @@
+#!/bin/sh
+
+build() { 
+	add_binary bcachefs
+	add_binary bash
+	add_runscript
+}
+
+help() {
+	cat << HELPEOF
+Rollback bcachefs
+HELPEOF
+}
