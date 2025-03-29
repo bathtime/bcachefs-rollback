@@ -54,6 +54,10 @@ Then restart your computer and choose the 'restore snapshot' option from the boo
 
 If all is okay and you'd like to get rid of the residual files on your original / drive, choose the 'delete root system' option in the boot menu. This is experimental, but if everything checks out, all except /.snapshots and /@root should remain.
 
+# TODO
+
+- Find a way to easily select snapshots within the menu.
+
 # Bugs
 
-- The first restore (before /@root is created) will result in a small error when the system attempts to move a non-existant backup snapshot of /@root to /.snapshots.
+- The first restore (before /@root is created) will result in a small error when the system attempts to move a non-existant backup snapshot of /@root to /.snapshots. [testing bugfix]
