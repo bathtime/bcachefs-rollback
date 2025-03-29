@@ -23,7 +23,7 @@ You can find your root partition label by runing the command:
 blkid
 ```
 
-Edit /etc/mkinitcpio.conf to include the 'bcachefs-rollback' hook and 'bcachefs' module:
+Edit /etc/mkinitcpio.conf to include the 'bcachefs-rollback' hook and 'bcachefs' module. Your system's hooks may look different, but just make sure that you add the 'bcachefs-rollback' hook after the 'filesystems' hook:
 
 ```
 MODULES=(bcachefs)
@@ -37,7 +37,6 @@ Update initramfs with:
 mkinitcpio -P
 ```
 
-If you wish to update the hooks, you must run this command every time afterwards for the changes to take effect.
 
 # Running the program:
 
