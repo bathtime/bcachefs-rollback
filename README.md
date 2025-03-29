@@ -36,10 +36,10 @@ mkinitcpio -P
 
 # Running the program:
 
-In order for you to make be able to use this program you must first make a snapshot for your / drive (the snapshot may be r/o as shown below):
+First check to see if the hook is working by booting up your system and choosing the 'boot root system' menu option. This will boot you into your regular system. If all is okay, make a snapshot for your / drive (the snapshot may be r/o as shown below):
 
 bcachefs subvolume snapshot -r / /.snapshots/initial
 
 Then restart your computer and choose the 'restore snapshot' option from the booting menu. Type the full word 'initial' (or whatever you've named the snapshot) into the prompt. The system should then take a snapshot of /.snapshots/initial and store it in /@root, which is your new main system. The program will then automatically boot you into /@root. This step should still create a read/write snapshot of /@root even if the 'initial' snapshot was read only.
 
-Hopefully things went fine.
+If all is okay and you'd like to get rid of the residual files on your original / drive, choose the 'delete root system' option in the boot menu. This is experimental, but if everything checks out, all except /.snapshots and /@root should remain.
