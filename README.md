@@ -44,7 +44,11 @@ Copy the bcachefs-rollback install file to /usr/lib/initcpio/install/
 
 .
 
-Edit /usr/lib/initcpio/hooks/bcachefs-rollback and make sure that the variable LABEL (near the top of the script) is set to your root partition label.
+Edit /usr/lib/initcpio/hooks/bcachefs-rollback and make sure that the variable LABEL (near the top of the script) is set to your root partition label:
+
+```
+LABEL=MY-ROOT-LABEL
+```
 
 You can find your root partition label by runing the command:
 ```
