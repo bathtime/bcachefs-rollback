@@ -1,4 +1,4 @@
-Please note that this is experimental and only for use on non-producion machines by those who have read and understand all this code. This has only been tested on my own system, and I am not a professional coder. Chances are high that your system may become borked by running this.
+Please note that this is experimental and only for use on non-producion machines. Do not run this program unless you have read and understand all the code within. This has only been tested on my own system, and I am not a professional coder. Chances are high that your system may become borked by running this.
 
 I made this script because I was unable to find anything else online that allowed a person to easily do rollbacks and/or boot into snapshots on bcachefs. It would be great to get the ball rolling, even if this is not 'good quality' code to start with. My hope is that others will use/modify this program and report back with the changes so all can benefit.
 
