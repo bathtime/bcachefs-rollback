@@ -1,7 +1,7 @@
 Please note that this is complelety experimental and only for use on non-producion machines.
 
-# bcachefs-snapshot-hook
-A hook to allow booting into snapshots and rollback on bcachefs
+# bcachefs-rollback
+This program is a mkinitcpio hook that allows booting into snapshots and rollback on bcachefs
 
 # Installation:
 
