@@ -1,4 +1,4 @@
-Please not that this is complelety experimental and only for use on non-producion machines.
+Please note that this is complelety experimental and only for use on non-producion machines.
 
 # bcachefs-snapshot-hook
 A hook to allow booting into snapshots and rollback on bcachefs
