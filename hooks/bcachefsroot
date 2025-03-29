@@ -74,8 +74,7 @@ run_latehook() {
 
 	elif [[ "$key" = 'm' ]]; then
 
-		echo -e "\nType the name of the snapshot you would like to recover to @root.
-(Names must not contain any spaces!)\n"
+		echo -e "\nType the name of the snapshot you would like to recover to @root.\n"
 		
 		ls
 
@@ -87,19 +86,19 @@ run_latehook() {
 			
 			umount $new_root
 			
-			#mv $mnt$root2 $mnt$snapshot_dir/$root2_old
-			
+			if [ -d "$mnt$snapshot_dir$root2-old" ]; then
+				bcachefs subvolume delete "$mnt$snapshot_dir$root2-old"
+				rm -rf "$mnt$snapshot_dir$root2-old"
+			fi
 
-			bcachefs subvolume delete "$mnt$snapshot_dir$root2-old"
-			rm -rf "$mnt$snapshot_dir$root2-old"
 			bcachefs subvolume snapshot "$mnt$root2" "$mnt$snapshot_dir$root2-old"
 
-			bcachefs subvolume delete /mnt/@root
-			rm -rf /mnt/@root
+			if [ -d "$mnt$root2" ]; then
+				bcachefs subvolume delete $mnt$root2
+				rm -rf $mnt$root2
+			fi
 
-			bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" /mnt/@root
-
-			#mv "$snapshot" $mnt$root2
+			bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" $mnt$root2
 
 			mount --bind $mnt$root2 $new_root
 			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
@@ -114,7 +113,6 @@ run_latehook() {
 			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 
 		fi
-
 
 
 	elif [[ "$key" = 'b' ]]; then
