@@ -4,7 +4,7 @@
 #			*** Make sure 'LABEL' matches your root system label !! ***
 #			You can find this using the command 'blkid'
 
-LABEL=ROOT2
+LABEL=ROOT-laptop
 
 # $root (or /@root) will be where all the system files are stored once you've made a snapshot
 # to /@root. At that point you'll be able to delete all the files in your original / directory
@@ -92,9 +92,8 @@ run_latehook() {
 				rm -rf "$mnt$snapshot_dir$root-old"
 			fi
 
-			bcachefs subvolume snapshot "$mnt$root" "$mnt$snapshot_dir$root-old"
-
 			if [ -d "$mnt$root" ]; then
+				bcachefs subvolume snapshot "$mnt$root" "$mnt$snapshot_dir$root-old"
 				bcachefs subvolume delete $mnt$root
 				rm -rf $mnt$root
 			fi
