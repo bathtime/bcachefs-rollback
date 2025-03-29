@@ -9,6 +9,26 @@ This program is a mkinitcpio hook that allows booting into snapshots and rollbac
 
 # Installation:
 
+I should mention that I'm not entirely sure how flexible this program is with certain subvolume, boot, and efi, setups. For reference, I'll post what my /etc/fstab looks like:
+
+
+```
+# /dev/nvme0n1p4 LABEL=ROOT-laptop
+UUID=9255082a-98bf-40b3-b26b-b79a1096cc4b       /               bcachefs        rw,noatime      0 0
+
+# /dev/nvme0n1p2 LABEL=BOOT
+UUID=63600023-1a46-4983-b17f-9487092fba31       /boot           ext2            rw,noatime      0 2
+
+# /dev/nvme0n1p1 LABEL=EFI
+UUID=42C6-79ED          /efi            vfat            rw,noatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro        0 2
+
+#/.snapshots                /.snapshots          none            rw,noatime,rw,noshard_inode_numbers,bind  0 0
+
+/var/log                /var/log          none            rw,noatime,rw,noshard_inode_numbers,bind  0 0
+
+/var/tmp                /var/tmp          none            rw,noatime,rw,noshard_inode_numbers,bind  0 0
+```
+
 In order to be able to access your snapshots, you must have your snapshots directory at /.snapshots.
 DO NOT mount this snapshot directory in /etc/fstab. The hooks will mount it automatically.
 
