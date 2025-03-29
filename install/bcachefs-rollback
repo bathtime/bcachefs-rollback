@@ -8,6 +8,6 @@ build() {
 
 help() {
 	cat << HELPEOF
-Rollback bcachefs
+Rollback bcachefs and boot into snapshots
 HELPEOF
 }
