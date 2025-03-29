@@ -18,9 +18,10 @@ Copy the bcachefs-rollback install file to /usr/lib/initcpio/install/
 
 Edit /usr/lib/initcpio/hooks/bcachefs-rollback and make sure that the variable LABEL is set to your root partition label
 
-You can find your root partition label by runing the command: blkid
-
-.
+You can find your root partition label by runing the command:
+```
+blkid
+```
 
 Edit /etc/mkinitcpio.conf to include the 'bcachefs-rollback' hook and 'bcachefs' module:
 
@@ -29,8 +30,6 @@ MODULES=(bcachefs)
 
 HOOKS=(base udev autodetect microcode modconf keyboard block filesystems bcachefs-rollback)
 ```
-
-.
 
 Update initramfs with:
 
