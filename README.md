@@ -76,7 +76,7 @@ Then restart your computer and choose the 'restore snapshot' option from the boo
 
 From now on when the computer boots up to the bcachefs-rollback menu you may either wait 15 seconds for the menu to timeout (will boot into /@root) or just press the ENTER key to immidiately boot into /@root.
 
-If all is okay and you'd like to get rid of the residual files on your original / drive (which can be accessed by chooseing the 'boot root system' option in the boot menu), choose the 'delete root system' option. This is experimental! If everything checks out, all except /.snapshots and /@root should remain.
+If all is okay and you'd like to get rid of the residual files on your original / drive (which can be accessed by chooseing the 'boot root system' option in the boot menu), choose the 'delete root system' option. This is experimental! If everything checks out, all except /.snapshots and /@root should remain. At this point all your system files will be in /@root.
 
 # TODO
 
