@@ -14,7 +14,7 @@ DO NOT mount this snapshot directory in /etc/fstab. The hooks will mount it auto
 
 .
 
-Copy the bcachefs-rollback hook file to /usr/lib/initcpio/hooks/
+Copy the bcachefs-rollback hooks file to /usr/lib/initcpio/hooks/
 
 Copy the bcachefs-rollback install file to /usr/lib/initcpio/install/
 
