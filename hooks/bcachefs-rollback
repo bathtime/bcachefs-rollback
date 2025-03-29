@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 
-#			*** Make sure 'LABEL' matches your root system label !!! ***
+#			*** Make sure 'LABEL' matches your root system label !! ***
 #			You can find this using the command 'blkid'
 
 LABEL=ROOT2
