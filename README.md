@@ -56,7 +56,7 @@ If all is okay and you'd like to get rid of the residual files on your original 
 
 # TODO
 
-- Find a way to easily select snapshots within the menu.
+- Find a way to easily select snapshots within the menu. ATM they must be fully typed out.
 
 # Bugs
 
