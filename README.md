@@ -50,7 +50,7 @@ Edit /usr/lib/initcpio/hooks/bcachefs-rollback and make sure that the variable L
 LABEL=MY-ROOT-LABEL
 ```
 
-You can find your root partition label by runing the command:
+You can find your root partition label by running the command:
 ```
 blkid
 ```
