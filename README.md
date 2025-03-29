@@ -9,7 +9,9 @@ This program is a mkinitcpio hook that allows booting into snapshots and rollbac
 
 # Installation:
 
-I should mention that I'm not entirely sure how flexible this program is with certain subvolume, boot, and efi, setups. For reference, I'll post what my /etc/fstab looks like:
+I should mention that I'm not entirely sure how flexible this program is with certain subvolume, boot, and efi setups.
+
+For reference, here is what my /etc/fstab looks like:
 
 
 ```
