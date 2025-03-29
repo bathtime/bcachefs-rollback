@@ -24,7 +24,8 @@ You can find your root partition label by runing the command: blkid
 
 Edit /etc/mkinitcpio.conf to include the 'bcachefs-rollback' hook and 'bcachefs' module:
 
-```MODULES=(bcachefs)
+```
+MODULES=(bcachefs)
 
 HOOKS=(base udev autodetect microcode modconf keyboard block filesystems bcachefs-rollback)
 ```
@@ -33,14 +34,16 @@ HOOKS=(base udev autodetect microcode modconf keyboard block filesystems bcachef
 
 Update initramfs with:
 
-```mkinitcpio -P
+```
+mkinitcpio -P
 ```
 
 # Running the program:
 
 First check to see if the hook is working by booting up your system and choosing the 'boot root system' menu option. This will boot you into your regular system. If all is okay, make a snapshot for your / drive (the snapshot may be r/o as shown below):
 
-```bcachefs subvolume snapshot -r / /.snapshots/initial
+```
+bcachefs subvolume snapshot -r / /.snapshots/initial
 ```
 
 Then restart your computer and choose the 'restore snapshot' option from the booting menu. Type the full word 'initial' (or whatever you've named the snapshot) into the prompt. The system should then take a snapshot of /.snapshots/initial and store it in /@root, which is your new main system. The program will then automatically boot you into /@root. This step should still create a read/write snapshot of /@root even if the 'initial' snapshot was read only.
