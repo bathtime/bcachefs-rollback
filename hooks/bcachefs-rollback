@@ -1,0 +1,159 @@
+#!/usr/bin/bash
+
+
+#			*** Make sure 'LABEL' matches your root system label !!! ***
+#			You can find this using the command 'blkid'
+
+LABEL=ROOT2
+
+# $root (or /@root) will be where all the system files are stored once you've made a snapshot
+# to /@root. At that point you'll be able to delete all the files in your original / directory
+# (with the exception of .snapshots and @root) by issuing the 'delete root system' option 
+# in the menu. From then on /@root will be where all your new system files will reside
+root='/@root'
+
+snapshot_dir=/.snapshots
+
+
+run_latehook() {
+
+	#/usr/lib/initcpio/init
+
+	new_root=/new_root
+	mkdir -p $new_root
+
+	mnt=/mnt
+
+	mount -m LABEL="$LABEL" $mnt
+	
+	cd $mnt$snapshot_dir
+
+	echo -e "\nWhat would you like to do?
+
+<s> boot into a snapshot
+<r> restore snapshot
+<b> boot root system
+<d> delete root system
+<e> enter bash
+
+<ENTER> boot @root\n"
+
+	read -s -t 15 -n 1 key
+
+	if [[ "$key" = 's' ]]; then
+	
+		echo -e "\nType the name of the snapshot you would like to load.\n"
+		
+		ls "$mnt$snapshot_dir"
+
+		echo
+
+		read snapshot
+	
+		if [ -d "$snapshot" ]; then
+
+			umount $new_root
+			mount --bind "$mnt$snapshot_dir/$snapshot" $new_root
+			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+
+		else
+			
+			echo -e "\nThe snapshot \'snapshot\' does not exist!\n"
+			
+			sleep 2
+
+			mount --bind $mnt $new_root
+			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+
+		fi
+	
+	elif [[ "$key" = 'b' ]]; then
+	
+		umount $new_root
+		mount --bind $mnt $new_root
+		mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+
+	elif [[ "$key" = 'r' ]]; then
+
+		echo -e "\nType the name of the snapshot you would like to recover to @root.\n"
+		
+		ls
+
+		echo
+
+		read snapshot
+	
+		if [ -d "$snapshot" ]; then
+			
+			umount $new_root
+			
+			if [ -d "$mnt$snapshot_dir$root-old" ]; then
+				bcachefs subvolume delete "$mnt$snapshot_dir$root-old"
+				rm -rf "$mnt$snapshot_dir$root-old"
+			fi
+
+			bcachefs subvolume snapshot "$mnt$root" "$mnt$snapshot_dir$root-old"
+
+			if [ -d "$mnt$root" ]; then
+				bcachefs subvolume delete $mnt$root
+				rm -rf $mnt$root
+			fi
+
+			bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" $mnt$root
+
+			mount --bind $mnt$root $new_root
+			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+
+		else
+			
+			echo -e "\nThe snapshot \'snapshot\' does not exist!\n"
+			
+			sleep 2
+
+			mount --bind $mnt $new_root
+			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+
+		fi
+
+
+	elif [[ "$key" = 'e' ]]; then
+
+		echo "Entering bash..."
+		bash
+	
+	elif [[ "$key" = 'd' ]]; then
+	
+	
+		# You can check for any main directory in @root. Just make sure the system is there or not 
+		# You must keep .snapshots and @root in / or the system won't start
+		if [ -d $mnt$root/etc ]; then
+
+			echo "Deleting / (excepting .snapshots and @root)..."
+			
+			umount $new_root
+		
+			rm -rf /mnt/bin /mnt/boot /mnt/dev /mnt/efi /mnt/etc /mnt/home /mnt/lib /mnt/lib64 /mnt/'lost+found' /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/srv /mnt/sys /mnt/tmp /mnt/usr /mnt/var
+			
+			mount --bind "$mnt$root" $new_root
+			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+		
+		else
+			
+			echo -e "\nNo system located at @root. Will not delete main system.\n"
+			bash
+		
+		fi
+
+	else
+		
+		echo "Booting default (/@root)..."
+		sleep 1
+
+		umount $new_root
+		
+		mount --bind "$mnt$root" $new_root
+		mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+
+	fi
+
+}
