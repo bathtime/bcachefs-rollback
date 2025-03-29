@@ -37,6 +37,8 @@ Update initramfs with:
 mkinitcpio -P
 ```
 
+If you wish to update the hooks, you must run this command every time afterwards for the changes to take effect.
+
 # Running the program:
 
 First check to see if the hook is working by booting up your system and choosing the 'boot root system' menu option. This will boot you into your regular system. If all is okay, make a snapshot for your / drive (the snapshot may be r/o as shown below):
