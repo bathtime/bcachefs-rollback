@@ -49,3 +49,7 @@ bcachefs subvolume snapshot -r / /.snapshots/initial
 Then restart your computer and choose the 'restore snapshot' option from the booting menu. Type the full word 'initial' (or whatever you've named the snapshot) into the prompt. The system should then take a snapshot of /.snapshots/initial and store it in /@root, which is your new main system. The program will then automatically boot you into /@root. This step should still create a read/write snapshot of /@root even if the 'initial' snapshot was read only.
 
 If all is okay and you'd like to get rid of the residual files on your original / drive, choose the 'delete root system' option in the boot menu. This is experimental, but if everything checks out, all except /.snapshots and /@root should remain.
+
+# Bugs
+
+- The first restore (before /@root is created) will result in a small error when the system attempts to move a non-existant backup snapshot of /@root to /.snapshots.
