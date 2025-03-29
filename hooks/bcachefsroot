@@ -2,31 +2,40 @@
 
 
 #			*** Make sure 'LABEL' matches your root system label !!! ***
+#			You can find this using the command 'blkid'
+
 LABEL=ROOT2
+
+# 'root2' (or /@root) will be where all the system files are stored. Once you've made a snapshot
+# to /@root and updated with 'mkinitcpio -P', you'll be able to delete all the files in your
+# original / directory by issuing the delete / command in the menu. /@root will be your new system
 root2='/@root'			# This is your default root where you'll be able to swap for other snapshots
+
+snapshot_dir=/.snapshots
 
 
 run_latehook() {
 
 	#/usr/lib/initcpio/init
 
-	real_root=/real_root
 	new_root=/new_root
-	mkdir -p $real_root $new_root
+	mkdir -p $new_root
 
 	mnt=/mnt
-	snapshot_dir=/.snapshots
 
 	mount -m LABEL="$LABEL" $mnt
 	
 	cd $mnt$snapshot_dir
 
-	echo -e "\nWhat would you like to do?\n
+	echo -e "\nWhat would you like to do?
+
 <s> boot into a snapshot
-<r> boot main root system
+<r> boot root system
 <m> move snapshot
+<d> delete root system
 <b> enter bash
-<ENTER> boot /@root system\n"
+
+<ENTER> boot @root\n"
 
 	read -s -t 15 -n 1 key
 
@@ -115,6 +124,29 @@ run_latehook() {
 		echo "Entering bash..."
 		bash
 	
+	elif [[ "$key" = 'd' ]]; then
+	
+	
+		# You can check for any main directory in @root. Just make sure the system is there or not 
+		# You must keep .snapshots and @root in / or the system won't start
+		if [ -d $mnt$root2/etc ]; then
+
+			echo "Deleting / (excepting .snapshots and @root)..."
+			
+			umount $new_root
+		
+			rm -rf --one-file-system /mnt/bin /mnt/boot /mnt/dev /mnt/efi /mnt/etc /mnt/home /mnt/lib /mnt/lib64 /mnt/'lost+found' /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/srv /mnt/sys /mnt/tmp /mnt/usr /mnt/var
+			
+			mount --bind "$mnt$root2" $new_root
+			mount --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+		
+		else
+			
+			echo -e "\nNo system located at @root. Will not delete main system.\n"
+			bash
+		
+		fi
+
 	else
 		
 		echo "Booting default (/@root)..."
