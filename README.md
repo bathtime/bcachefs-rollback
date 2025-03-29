@@ -1,8 +1,8 @@
-Please note that this is experimental and only for use on non-producion machines by those who have read and understand all this code. This has only been tested on my own system. Chances are extremely high that your system may be borked.
+Please note that this is experimental and only for use on non-producion machines by those who have read and understand all this code. This has only been tested on my own system, I am not a professional coder, and chances are high that your system may be borked.
 
-All are welcome to use/modify this code, but please let me know of the changes you make so I can improve my script as well.
+I made this script because I was unable to find anything else online that allowed a person to easily do rollback and/or boot into snapshots on bcachefs. It would be great to get the ball rolling, even if this is not 'good quality' code to start with. My hope is that others will use/modify this program and report back with the changes so all can benefit.
 
-Thanks!
+Enjoy! :)
 
 # bcachefs-rollback
 This program is a mkinitcpio hook that allows booting into snapshots and rollback on bcachefs
