@@ -72,7 +72,13 @@ mkinitcpio -P
 
 # Setting it up:
 
-First check to see if the hook is working by booting up your system and choosing the 'boot root system' menu option. This will boot you into your regular system. If all is okay, make a snapshot for your / drive (the snapshot may be r/o as shown below):
+First check to see if the hook is working by booting up your system and choosing the 'boot root system' menu option.
+
+It should look like this:
+
+![Alt text](bcachefs-rollback.jpg)
+
+This will boot you into your regular system. If all is okay, make a snapshot for your / drive (the snapshot may be r/o as shown below):
 
 ```
 bcachefs subvolume snapshot -r / /.snapshots/initial
