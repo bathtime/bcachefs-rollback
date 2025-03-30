@@ -35,17 +35,25 @@ run_latehook() {
 <b> boot root system
 <d> delete root system
 <e> enter bash
+<t> testing (used for debug)
 
 <ENTER> boot @root\n"
 
 	read -s -t 15 -n 1 key
 
-	if [[ "$key" = 's' ]]; then
+	if [[ "$key" = 't' ]]; then
+	
+		echo "ls -l --full-time | cut -d" " -f6- | cut -d' ' -f3 --complement | sed 's/\.[0-9]*/ -/'"
+
+		bash
+
+	elif [[ "$key" = 's' ]]; then
 	
 		echo -e "\nType the name of the snapshot you would like to load.\n"
+
+		# TODO: create a way to easily select snapshots instead of having to enter them
 		
-		#ls "$mnt$snapshot_dir"
-		ls --full-time | awk '{ print $6" @ "$7" - "$9}'
+		ls "$mnt$snapshot_dir"
 
 		echo
 
