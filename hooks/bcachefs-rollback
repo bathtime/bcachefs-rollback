@@ -44,7 +44,8 @@ run_latehook() {
 	
 		echo -e "\nType the name of the snapshot you would like to load.\n"
 		
-		ls "$mnt$snapshot_dir"
+		#ls "$mnt$snapshot_dir"
+		ls --full-time | awk '{ print $6" @ "$7" - "$9}'
 
 		echo
 
