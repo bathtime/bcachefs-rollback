@@ -32,9 +32,9 @@ run_latehook() {
 	cd $mnt$snapshot_dir
 
 	echo -e "\nPress any key for bcachefs rollback.\n"
-	
+
 	run=0
-	read -sn1 -t 2 && run=1
+	read -sn1 -t 5 && run=1
 
 	if [ $run = 1 ]; then
 		
