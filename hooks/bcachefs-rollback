@@ -4,15 +4,18 @@
 #			*** Make sure 'LABEL' matches your root system label !! ***
 #			You can find this using the command 'blkid'
 
-LABEL=ROOT-laptop
+LABEL=ROOT-usb
 
-# $root (or /@root) will be where all the system files are stored once you've made a snapshot
-# to /@root. At that point you'll be able to delete all the files in your original / directory
-# (with the exception of .snapshots and @root) by issuing the 'delete root system' option 
-# in the menu. From then on /@root will be where all your new system files will reside
+# $root (or /@root) will be where all the system files are stored once
+# you've made a snapshot to /@root. At that point you'll be able to delete
+# all the files in your original / directory (with the exception of
+# .snapshots and @root) by issuing the 'delete root system' option in the menu.
+# From then on /@root will be where all your new system files will reside
+
 root='/@root'
 
 snapshot_dir=/.snapshots
+mountOpts='noatime'
 
 
 run_latehook() {
@@ -28,10 +31,18 @@ run_latehook() {
 	
 	cd $mnt$snapshot_dir
 
-	echo -e "\nWhat would you like to do?
+	echo -e "\nPress any key for bcachefs rollback.\n"
+	
+	run=0
+	read -sn1 -t 2 && run=1
+
+	if [ $run = 1 ]; then
+		
+		echo -e "\nWhat would you like to do?
 
 <s> boot into a snapshot
 <r> restore snapshot
+<w> snapshot ro to rw (TODO)
 <b> boot root system
 <d> delete root system
 <e> enter bash
@@ -39,11 +50,17 @@ run_latehook() {
 
 <ENTER> boot @root\n"
 
-	read -s -t 15 -n 1 key
+		read -sn 1 key
 
-	if [[ "$key" = 't' ]]; then
+	fi
+
+	if [[ "$key" = 'w' ]]; then
+			
+		echo "TODO!"
+		bash
+
+	elif [[ "$key" = 't' ]]; then
 	
-		echo "ls -l --full-time | cut -d" " -f6- | cut -d' ' -f3 --complement | sed 's/\.[0-9]*/ -/'"
 
 		bash
 
@@ -62,8 +79,8 @@ run_latehook() {
 		if [ -d "$snapshot" ]; then
 
 			umount $new_root
-			mount --bind "$mnt$snapshot_dir/$snapshot" $new_root
-			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+			mount --bind -o "$mountOpts" "$mnt$snapshot_dir/$snapshot" $new_root
+			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 
 		else
 			
@@ -71,16 +88,16 @@ run_latehook() {
 			
 			sleep 2
 
-			mount --bind $mnt $new_root
-			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+			mount --bind -o "$mountOpts" $mnt $new_root
+			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 
 		fi
 	
 	elif [[ "$key" = 'b' ]]; then
 	
 		umount $new_root
-		mount --bind $mnt $new_root
-		mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+		mount --bind -o "$mountOpts" $mnt $new_root
+		mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 
 	elif [[ "$key" = 'r' ]]; then
 
@@ -109,8 +126,8 @@ run_latehook() {
 
 			bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" $mnt$root
 
-			mount --bind $mnt$root $new_root
-			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+			mount --bind -o "$mountOpts" $mnt$root $new_root
+			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 
 		else
 			
@@ -118,8 +135,8 @@ run_latehook() {
 			
 			sleep 2
 
-			mount --bind $mnt $new_root
-			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+			mount --bind -o "$mountOpts" $mnt $new_root
+			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 
 		fi
 
@@ -142,8 +159,8 @@ run_latehook() {
 		
 			rm -rf /mnt/bin /mnt/boot /mnt/dev /mnt/efi /mnt/etc /mnt/home /mnt/lib /mnt/lib64 /mnt/'lost+found' /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/srv /mnt/sys /mnt/tmp /mnt/usr /mnt/var
 			
-			mount --bind "$mnt$root" $new_root
-			mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+			mount --bind -o "$mountOpts" "$mnt$root" $new_root
+			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 		
 		else
 			
@@ -159,8 +176,8 @@ run_latehook() {
 
 		umount $new_root
 		
-		mount --bind "$mnt$root" $new_root
-		mount --mkdir --bind "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+		mount --bind -o "$mountOpts" "$mnt$root" $new_root
+		mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 
 	fi
 
