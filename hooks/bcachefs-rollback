@@ -4,7 +4,7 @@
 #			*** Make sure 'LABEL' matches your root system label !! ***
 #			You can find this using the command 'blkid'
 
-LABEL=ROOT-usb
+LABEL=ROOT-laptop
 
 # $root (or /@root) will be where all the system files are stored once
 # you've made a snapshot to /@root. At that point you'll be able to delete
@@ -26,7 +26,7 @@ run_latehook() {
 
 	mount -m LABEL="$LABEL" $mnt
 	
-	echo -e "\nPress any key for bcachefs rollback."
+	echo -e "\nPress any key for bcachefs rollback.\n"
 
 	if [ $(read -sn1 -t 2 && echo 1) ]; then
 		
