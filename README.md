@@ -95,7 +95,7 @@ Choose the 'boot root system' menu option. This will boot you into your regular 
 bcachefs subvolume snapshot -r / /.snapshots/initial
 ```
 
-Then restart your computer and choose the 'restore snapshot' option from the booting menu. Type the full word 'initial' (or whatever you've named the snapshot) into the prompt. The system should then take a snapshot of /.snapshots/initial and store it in /@root, which is your new main system. The program will then automatically boot you into /@root. This step should still create a read/write snapshot of /@root even if the 'initial' snapshot was read only.
+Then restart your computer and choose the 'create @root snapshot from /' option from the booting menu. This will use your root system '/' to create a subvolume called @root. It will for now on be where your main system will be located. Press ENTER to boot into @root. You can also boot into @root by simply allowing the the menu timeout.
 
 # Running the program:
 
