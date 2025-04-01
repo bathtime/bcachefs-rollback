@@ -9,6 +9,13 @@ Enjoy! :)
 # bcachefs-rollback
 This program is a mkinitcpio hook that allows booting into snapshots and rollback on bcachefs
 
+# Features:
+
+- Easily boot snapshots, main /, or another directory
+- Recover snapshots
+- Mount any boot circumstance in tmpfs or overlay mode (squashfs functionality coming soon!)
+- Turn a r/o snapshot into a r/w snapshot on the fly
+
 # Installation:
 
 I should mention that I'm not entirely sure how flexible this program is with certain subvolume, boot, and efi setups.
@@ -33,7 +40,7 @@ UUID=42C6-79ED          /efi            vfat            rw,noatime,fmask=0022,dm
 /var/tmp                /var/tmp          none            rw,noatime,rw,noshard_inode_numbers,bind  0 0
 ```
 
-In order to be able to access your snapshots, you must have your snapshots directory at /.snapshots.
+In order to be able to access your snapshots, you must have your snapshots directory at /.snapshots or change the snapshot directory path in your bcachefs-rollback hooks file.
 DO NOT mount this snapshot directory in /etc/fstab. The hooks will mount it automatically.
 
 .
@@ -44,23 +51,12 @@ Copy the bcachefs-rollback install file to /usr/lib/initcpio/install/
 
 .
 
-Edit /usr/lib/initcpio/hooks/bcachefs-rollback and make sure that the variable LABEL (near the top of the script) is set to your root partition label:
-
-```
-LABEL=MY-ROOT-LABEL
-```
-
-You can find your root partition label by running the command:
-```
-blkid
-```
-
 Edit /etc/mkinitcpio.conf to include the 'bcachefs-rollback' hook and 'bcachefs' module. Your system's hooks may look different, but just make sure that you add the 'bcachefs-rollback' hook after the 'filesystems' hook (I'm not 100% sure where this hook should go, but this seems to work for me):
 
 ```
 MODULES=(bcachefs)
 
-HOOKS=(base udev autodetect microcode modconf keyboard block filesystems bcachefs-rollback)
+HOOKS=(base udev autodetect microcode modconf keyboard block filesys:wtems bcachefs-rollback)
 ```
 
 Update initramfs with:
@@ -115,3 +111,4 @@ If all is okay and you'd like to get rid of the residual files on your original 
 
 - The first restore (before /@root is created) will result in a small error when the system attempts to move a non-existant backup snapshot of /@root to /.snapshots [FIXED]
 - Custom mount opts not working. Could be overriden by /etc/fstab?
+- Label has to be manually entered. [FIXED - now it's automatic]
