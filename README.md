@@ -56,7 +56,7 @@ Edit /etc/mkinitcpio.conf to include the 'bcachefs-rollback' hook and 'bcachefs'
 ```
 MODULES=(bcachefs)
 
-HOOKS=(base udev autodetect microcode modconf keyboard block filesys:wtems bcachefs-rollback)
+HOOKS=(base udev autodetect microcode modconf keyboard block filesystems bcachefs-rollback)
 ```
 
 Update initramfs with:
