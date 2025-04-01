@@ -4,7 +4,7 @@
 #			*** Make sure 'LABEL' matches your root system label !! ***
 #			You can find this using the command 'blkid'
 
-LABEL=ROOT-laptop
+LABEL=ROOT-usb
 
 # $root (or /@root) will be where all the system files are stored once
 # you've made a snapshot to /@root. At that point you'll be able to delete
