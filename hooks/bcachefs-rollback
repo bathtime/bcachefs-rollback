@@ -4,7 +4,7 @@
 #			*** Make sure 'LABEL' matches your root system label !! ***
 #			You can find this using the command 'blkid'
 
-LABEL=ROOT-usb
+LABEL=ROOT-laptop
 
 # $root (or /@root) will be where all the system files are stored once
 # you've made a snapshot to /@root. At that point you'll be able to delete
@@ -16,27 +16,19 @@ root='/@root'
 
 snapshot_dir=/.snapshots
 mountOpts='noatime'
+new_root=/new_root
+mnt=/mnt
+
+# Useful file: /usr/lib/initcpio/init
 
 
 run_latehook() {
 
-	#/usr/lib/initcpio/init
-
-	new_root=/new_root
-	mkdir -p $new_root
-
-	mnt=/mnt
-
 	mount -m LABEL="$LABEL" $mnt
 	
-	cd $mnt$snapshot_dir
+	echo -e "\nPress any key for bcachefs rollback."
 
-	echo -e "\nPress any key for bcachefs rollback.\n"
-
-	run=0
-	read -sn1 -t 5 && run=1
-
-	if [ $run = 1 ]; then
+	if [ $(read -sn1 -t 2 && echo 1) ]; then
 		
 		echo -e "\nWhat would you like to do?
 
@@ -54,14 +46,13 @@ run_latehook() {
 
 	fi
 
-	if [[ "$key" = 'w' ]]; then
+	if [[ "$key" = 't' ]]; then
+		
+		bash
+	
+	elif [[ "$key" = 'w' ]]; then
 			
 		echo "TODO!"
-		bash
-
-	elif [[ "$key" = 't' ]]; then
-	
-
 		bash
 
 	elif [[ "$key" = 's' ]]; then
@@ -170,14 +161,25 @@ run_latehook() {
 		fi
 
 	else
-		
-		echo "Booting default (/@root)..."
-		sleep 1
 
 		umount $new_root
+
+		# Check if @root has been created and contains a working system
+		if [ -d $mnt$root/etc ]; then
+			
+			echo "Booting /@root..."
+			mount --bind -o "$mountOpts" "$mnt$root" $new_root
 		
-		mount --bind -o "$mountOpts" "$mnt$root" $new_root
+		else
+			
+			echo "Booting /..."
+			mount --bind -o "$mountOpts" "$mnt" $new_root
+		
+		fi
+
 		mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+		
+		sleep 1
 
 	fi
 
