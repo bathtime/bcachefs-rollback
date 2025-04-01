@@ -74,7 +74,24 @@ mkinitcpio -P
 
 First check to see if the hook is working by booting up your system. It should look close to this:
 
-![Alt text](bcachefs-rollback.jpg)
+```
+What would you like to do?
+
+<s> boot into a snapshot
+<r> restore snapshot
+<b> boot root system
+<d> delete root system
+<c> boot custom dir
+<e> enter bash
+
+<w> add ro -> rw flag
+<o> add overlay flag
+<t> add tmpfs flag
+<m> add custom mount opts (Not working)
+<z> add squashfs flag (TODO)
+
+<ENTER> boot @root
+```
 
 Choose the 'boot root system' menu option. This will boot you into your regular system. If all is okay, make a snapshot for your / drive (the snapshot may be r/o as shown below):
 
