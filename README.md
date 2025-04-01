@@ -114,3 +114,4 @@ If all is okay and you'd like to get rid of the residual files on your original 
 # Bugs
 
 - The first restore (before /@root is created) will result in a small error when the system attempts to move a non-existant backup snapshot of /@root to /.snapshots [FIXED]
+- Custom mount opts not working. Could be overriden by /etc/fstab?
