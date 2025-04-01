@@ -91,7 +91,7 @@ create_tmpfs() {
 run_latehook() {
 
 	# Automatically find the proper root part which was booted
-   root_part=$(mount | grep ${new_root} | sed "s# on ${new_root}.*##")
+	root_part=$(mount | grep ${new_root} | sed "s# on ${new_root}.*##")
 
 	# System pre-mounted, but we wanna mount the systems differently
 	umount ${new_root}
@@ -163,8 +163,8 @@ run_latehook() {
 			if [ -d "$mnt/etc" ]; then
 
 				if [ ! -d "$mnt$root" ]; then
-					echo "Creating snapshot of / to @root..."	
-					bcachefs subvolume snapshot "$mnt" "$mnt$root"
+
+					bcachefs subvolume snapshot "$mnt" "$mnt$root" && echo "@root snapshot created."	
 				else
 				
 					echo "There is already a @root created."
@@ -177,8 +177,6 @@ run_latehook() {
 	
 			fi
 	
-			boot "$root"
-
 		elif [[ "$key" = 'c' ]]; then
 			
 			echo -e "\nType the path you'd like to boot from.\n"
@@ -227,13 +225,11 @@ run_latehook() {
 				fi
 
 				bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" $mnt$root
-			
-				boot $root
-
+				echo -e "\n'$snapshot' recovered to @root.\n"
+					
 			else
 			
 				echo -e "\nThe snapshot '$snapshot' does not exist!\n"
-				bash
 
 			fi
 
@@ -253,18 +249,19 @@ run_latehook() {
 			
 				rm -rf /mnt/bin /mnt/boot /mnt/dev /mnt/efi /mnt/etc /mnt/home /mnt/lib /mnt/lib64 /mnt/'lost+found' /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/srv /mnt/sys /mnt/tmp /mnt/usr /mnt/var
 			
-				boot $root
-
 			else
 			
 				echo -e "\nNo system located at @root. Will not delete main system.\n"
-				bash
 		
 			fi
 
+		elif [[ "$key" = '' ]]; then
+			
+			boot $root
+		
 		else
 
-			boot $root
+			echo -e "\nNot an known option ($key). Please try again.\n"
 
 		fi
 
