@@ -3,6 +3,9 @@
 build() { 
 	add_binary bcachefs
 	add_binary bash
+	add_module overlay
+	add_module loop
+   add_binary rsync
 	add_runscript
 }
 
