@@ -67,7 +67,7 @@ run_latehook() {
 
 		read snapshot
 	
-		if [ -d "$snapshot" ]; then
+		if [ -d "$mnt$snapshot_dir/$snapshot" ]; then
 
 			umount $new_root
 			mount --bind -o "$mountOpts" "$mnt$snapshot_dir/$snapshot" $new_root
@@ -75,7 +75,7 @@ run_latehook() {
 
 		else
 			
-			echo -e "\nThe snapshot \'snapshot\' does not exist!\n"
+			echo -e "\nThe snapshot \'$snapshot\' was not found!\n"
 			
 			sleep 2
 
@@ -94,13 +94,13 @@ run_latehook() {
 
 		echo -e "\nType the name of the snapshot you would like to recover to @root.\n"
 		
-		ls
+		ls "$mnt$snapshot_dir"
 
 		echo
 
 		read snapshot
 	
-		if [ -d "$snapshot" ]; then
+		if [ -d "$mnt$snapshot_dir/$snapshot" ]; then
 			
 			umount $new_root
 			
@@ -122,7 +122,7 @@ run_latehook() {
 
 		else
 			
-			echo -e "\nThe snapshot \'snapshot\' does not exist!\n"
+			echo -e "\nThe snapshot \'$snapshot\' does not exist!\n"
 			
 			sleep 2
 
