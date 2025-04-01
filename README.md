@@ -12,7 +12,7 @@ This program is a mkinitcpio hook that allows booting into snapshots and rollbac
 # Features:
 
 - Easily boot snapshots, main /, or another directory
-- Recover snapshots
+- Recover root snapshots
 - Mount any boot circumstance in tmpfs or overlay mode (squashfs functionality coming soon!)
 - Turn a r/o snapshot into a r/w snapshot on the fly
 
