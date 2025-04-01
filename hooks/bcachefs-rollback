@@ -22,8 +22,44 @@ mnt=/mnt
 # Useful file: /usr/lib/initcpio/init
 
 
+boot() {
+
+	# Check if the boot directory contains a working system
+	if [ -d "$mnt$1/etc" ]; then
+			
+		echo "Booting $1..."
+		mount --bind -o "$mountOpts" "$mnt$1" $new_root
+		
+	else
+
+		echo "No system found at $1."
+		
+		if [ "$1" = "$root" ]; then
+
+			echo "Booting / instead..."
+			mount --bind -o "$mountOpts" "$mnt" $new_root
+		
+		else
+
+			echo "Booting $root instead..."
+			mount --bind -o "$mountOpts" "$mnt$root" $new_root
+
+		fi
+
+		sleep 2
+
+	fi
+	
+	mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+		
+	sleep 1
+
+}
+
+
 run_latehook() {
 
+	umount $new_root
 	mount -m LABEL="$LABEL" $mnt
 	
 	echo -e "\nPress any key for bcachefs rollback.\n"
@@ -35,6 +71,7 @@ run_latehook() {
 <s> boot into a snapshot
 <r> restore snapshot
 <w> snapshot ro to rw (TODO)
+<o> boot snapshot + overlay (TODO)
 <b> boot root system
 <d> delete root system
 <e> enter bash
@@ -66,29 +103,12 @@ run_latehook() {
 		echo
 
 		read snapshot
-	
-		if [ -d "$mnt$snapshot_dir/$snapshot" ]; then
-
-			umount $new_root
-			mount --bind -o "$mountOpts" "$mnt$snapshot_dir/$snapshot" $new_root
-			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-
-		else
-			
-			echo -e "\nThe snapshot '$snapshot' was not found!\n"
-			
-			sleep 2
-
-			mount --bind -o "$mountOpts" $mnt $new_root
-			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-
-		fi
+		
+		boot "$snapshot_dir/$snapshot"
 	
 	elif [[ "$key" = 'b' ]]; then
-	
-		umount $new_root
-		mount --bind -o "$mountOpts" $mnt $new_root
-		mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+
+		boot /
 
 	elif [[ "$key" = 'r' ]]; then
 
@@ -101,8 +121,6 @@ run_latehook() {
 		read snapshot
 	
 		if [ -d "$mnt$snapshot_dir/$snapshot" ]; then
-			
-			umount $new_root
 			
 			if [ -d "$mnt$snapshot_dir$root-old" ]; then
 				bcachefs subvolume delete "$mnt$snapshot_dir$root-old"
@@ -117,17 +135,12 @@ run_latehook() {
 
 			bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" $mnt$root
 
-			mount --bind -o "$mountOpts" $mnt$root $new_root
-			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+			boot $root
 
 		else
 			
 			echo -e "\nThe snapshot '$snapshot' does not exist!\n"
-			
-			sleep 2
-
-			mount --bind -o "$mountOpts" $mnt $new_root
-			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+			bash
 
 		fi
 
@@ -146,13 +159,10 @@ run_latehook() {
 
 			echo "Deleting / (excepting .snapshots and @root)..."
 			
-			umount $new_root
-		
 			rm -rf /mnt/bin /mnt/boot /mnt/dev /mnt/efi /mnt/etc /mnt/home /mnt/lib /mnt/lib64 /mnt/'lost+found' /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/srv /mnt/sys /mnt/tmp /mnt/usr /mnt/var
 			
-			mount --bind -o "$mountOpts" "$mnt$root" $new_root
-			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-		
+			boot $root
+
 		else
 			
 			echo -e "\nNo system located at @root. Will not delete main system.\n"
@@ -162,24 +172,7 @@ run_latehook() {
 
 	else
 
-		umount $new_root
-
-		# Check if @root has been created and contains a working system
-		if [ -d $mnt$root/etc ]; then
-			
-			echo "Booting /@root..."
-			mount --bind -o "$mountOpts" "$mnt$root" $new_root
-		
-		else
-			
-			echo "Booting /..."
-			mount --bind -o "$mountOpts" "$mnt" $new_root
-		
-		fi
-
-		mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
-		
-		sleep 1
+		boot $root
 
 	fi
 
