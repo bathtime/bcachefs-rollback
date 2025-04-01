@@ -75,7 +75,7 @@ run_latehook() {
 
 		else
 			
-			echo -e "\nThe snapshot \'$snapshot\' was not found!\n"
+			echo -e "\nThe snapshot '$snapshot' was not found!\n"
 			
 			sleep 2
 
@@ -122,7 +122,7 @@ run_latehook() {
 
 		else
 			
-			echo -e "\nThe snapshot \'$snapshot\' does not exist!\n"
+			echo -e "\nThe snapshot '$snapshot' does not exist!\n"
 			
 			sleep 2
 
