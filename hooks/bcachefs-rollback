@@ -47,8 +47,8 @@ boot() {
 		
 	else
 
-		echo -e "\n\nNo system found at $1."
-
+		error "No system found at $1."
+		
 	fi
 
 }
@@ -87,6 +87,11 @@ create_tmpfs() {
 
 }
 
+error() {
+
+	echo -e "\n<<< $1 >>>\n"
+
+}
 
 run_latehook() {
 
@@ -167,13 +172,13 @@ run_latehook() {
 					bcachefs subvolume snapshot "$mnt" "$mnt$root" && echo "@root snapshot created."	
 				else
 				
-					echo "There is already a @root created."
+					error "There is already a @root created."
 
 				fi
 		
 			else
 
-				echo "No system found at /."
+				error "No system found at /."
 	
 			fi
 	
@@ -229,7 +234,7 @@ run_latehook() {
 					
 			else
 			
-				echo -e "\nThe snapshot '$snapshot' does not exist!\n"
+				error "The snapshot '$snapshot' does not exist."
 
 			fi
 
@@ -251,7 +256,7 @@ run_latehook() {
 			
 			else
 			
-				echo -e "\nNo system located at @root. Will not delete main system.\n"
+				error "No system located at @root. Will not delete main system."
 		
 			fi
 
@@ -261,7 +266,7 @@ run_latehook() {
 		
 		else
 
-			echo -e "\nNot an known option ($key). Please try again.\n"
+			error "Not an known option ($key). Please try again."
 
 		fi
 
