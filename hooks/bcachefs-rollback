@@ -150,7 +150,8 @@ run_latehook() {
 		
 			cd $mnt$squashSource
 
-			mksquashfs . $mnt$squashPath$squashFile -noappend -no-recovery -mem-percent 20 -comp lz4 -e root.squashfs -e "$squashPath$squashFile" -e boot/ -e efi/ -e home/user/.cache/ -e home/user/.local/share/Trash/ -e dev/ -e var/cache/pacman/ -e run/timeshift/ -e proc/ -e sys/ -e tmp/ -e run/ -e mnt/ -e $snapshot_dir/* -e var/tmp/ -e var/log/ -e var/lib/systemd/random-seed -e root/.cache/*
+			# Won't work in overlay mode without sys,dev, and proc directories
+			mksquashfs . $mnt$squashPath$squashFile -noappend -no-recovery -mem-percent 20 -comp lz4 -e root.squashfs -e "$squashPath$squashFile" -e boot/ -e efi/ -e home/user/.cache/ -e home/user/.local/share/Trash/ -e var/cache/pacman/ -e run/timeshift/ -e tmp/ -e run/ -e mnt/ -e $snapshot_dir/* -e var/tmp/ -e var/log/ -e var/lib/systemd/random-seed -e root/.cache/*
 			
 			sleep 1
 
@@ -165,13 +166,16 @@ run_latehook() {
 				unsquashfs -d $new_root -f $mnt$squashPath$squashFile
 			
 			elif [ $overlayFlag = 'true' ]; then
-				
-				error "Feature currently not working with overlay flag. Try removing the overlay flag and adding the tmpfs flag."
 
-				mount --type="squashfs" --options="loop" --source="$mnt$squashPath$squashFile" --target="$new_root"
+				mount -t squashfs -o loop --source "$mnt$squashPath$squashFile" --target "$new_root/"
 			
 				create_overlay
-	
+			
+			else
+
+				error "Feature currently requires either overlay or tmpfs flag to work."
+				continue
+
 			fi
 	
 			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
