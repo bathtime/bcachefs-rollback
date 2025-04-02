@@ -78,6 +78,8 @@ What would you like to do?
 <b> boot root system
 <n> create @root snapshot from /
 <d> delete root system
+<z> create squashfs
+<x> run squashfs
 <c> boot custom dir
 <e> enter bash
 
@@ -85,7 +87,6 @@ What would you like to do?
 <o> add overlay flag
 <t> add tmpfs flag
 <m> add custom mount opts (Not working)
-<z> add squashfs flag (TODO)
 
 <ENTER> boot @root
 ```
@@ -111,6 +112,7 @@ For a more permanent solution, choose the 'add ro -> rw flag' if you'd like to t
 
 # Bugs
 
+- SquashFS currently not working alone or with overlay flag (works with tmpfs flag)
 - The first restore (before /@root is created) will result in a small error when the system attempts to move a non-existant backup snapshot of /@root to /.snapshots [FIXED]
 - Custom mount opts not working. Could be overriden by /etc/fstab?
 - Label has to be manually entered. [FIXED - now it's automatic]
