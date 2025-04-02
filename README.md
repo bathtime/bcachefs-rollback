@@ -100,7 +100,7 @@ If the @root subvolume boots without error, you may want to delete the residual 
 
 # Extra features
 
-You may wish to boot into an overlay filesystem if you're booting a read only subvolume. Simply select the 'add overlay flag' and then make your selection of what to boot. The same goes for the 'add tmpfs flag' option. That said, it should be known that these modes have no effect on separate partitions, such as /boot and /efi.
+You may wish to boot into an overlay filesystem if you're booting a read only subvolume. Simply select the 'add overlay flag' and then make your selection of what to boot. The same goes for the 'add tmpfs flag' option. That said, it should be known that these modes have no effect on separate partitions, such as /boot and /efi. As of now, it is not possible to take snapshots in tmpfs and overlay mode.
 
 For a more permanent solution, choose the 'add ro -> rw flag' if you'd like to transform a read only snapshot to a read/write snapshot.
 
