@@ -8,6 +8,7 @@ build() {
 	add_binary rsync
 	add_binary unsquashfs
 	add_binary mksquashfs
+	add_module vfat
 	add_runscript
 }
 
