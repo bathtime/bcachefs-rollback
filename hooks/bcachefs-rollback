@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
 
-# $root (or /@root) will be where all the system files are stored once
-# you've made a snapshot to /@root. At that point you'll be able to delete
-# all the files in your original / directory (with the exception of
-# .snapshots and @root) by issuing the 'delete root system' option in the menu.
-# From then on /@root will be where all your new system files will reside
+# $root (or /@root) will be where all the system files are stored once you've made
+# a snapshot to /@root (via the 'create @root snapshot from /' option.)
+# At that point you'll be able to delete all the files in your original / directory
+# (with the exception of .snapshots and @root) by issuing the 'delete root system'
+# option in the menu.
 
 root='/@root'
 
@@ -95,16 +95,15 @@ error() {
 
 run_latehook() {
 
-	# Automatically find the proper root part which was booted
+	# Automatically find the proper root partition which was booted
 	root_part=$(mount | grep ${new_root} | sed "s# on ${new_root}.*##")
 
-	# System pre-mounted, but we wanna mount the systems differently
+	# System pre-mounted, but we want to mount the systems differently
 	umount ${new_root}
 
 	mount --mkdir -t bcachefs ${root_part} ${mnt}
 	
 	echo -e "\nPress any key for bcachefs rollback.\n"
-
 
 	finished=false
 	showMenu=false
@@ -238,7 +237,6 @@ run_latehook() {
 
 			fi
 
-
 		elif [[ "$key" = 'e' ]]; then
 
 			echo "Entering bash..."
@@ -260,7 +258,7 @@ run_latehook() {
 		
 			fi
 
-		elif [[ "$key" = '' ]]; then
+		elif [[ "$key" = '' ]]; then  # ie., <ENTER> was pressed
 			
 			boot $root
 		
