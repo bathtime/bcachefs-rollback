@@ -128,6 +128,7 @@ run_latehook() {
 <d> delete root system
 <z> create squashfs
 <x> run squashfs
+<y> restore from squashfs (TODO)
 <c> boot custom dir
 <e> enter bash
 <q> quit
@@ -187,6 +188,33 @@ run_latehook() {
 			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
 
 			finished=true
+
+		elif [[ "$key" = 'y' ]]; then
+
+			echo -e "\nType the path you'd like to restore.\n"
+
+			read restorePath
+			
+			#[ -d "$new_root" ] && bcachefs subvolume delete "$new_root"
+
+			mount -t squashfs -o loop --source "$mnt$squashPath$squashFile" --target "$new_root"
+		
+			#if [ ! "$mnt$restorePath" = '/' ] && [ -d "$mnt$restorePath" ]; then
+			#	echo "Deleting subvolume in current path..."
+			#	bcachefs subvolume delete "$mnt$restorePath"
+			#	rm -rf "$mnt$restorePath"
+			#fi
+			
+			mkdir -p "$mnt$restorePath"
+
+			echo "Copying $new_root/* -> $mnt$restorePath/. Please be patient."
+			
+			cd "$new_root"
+			cp -a . "$mnt$restorePath/"
+
+			#umount "$new_root"
+			
+			echo "All done'
 
 		elif [[ "$key" = 'o' ]]; then
 	
