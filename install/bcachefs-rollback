@@ -6,6 +6,8 @@ build() {
 	add_module overlay
 	add_module loop
 	add_binary rsync
+	add_binary unsquashfs
+   add_binary mksquashfs
 	add_runscript
 }
 
