@@ -14,6 +14,8 @@ mountOpts='noatime'
 new_root=/new_root
 mnt=/mnt
 temp="$mnt/temp"			# Used for changing from ro to rw
+squashPath='/'
+squashFile='root.squashfs'
 
 # Useful file: /usr/lib/initcpio/init
 
@@ -121,14 +123,16 @@ run_latehook() {
 <b> boot root system
 <n> create @root snapshot from /
 <d> delete root system
+<z> create squashfs
+<x> run squashfs
 <c> boot custom dir
 <e> enter bash
+<q> quit
 
 <w> add ro -> rw flag
 <o> add overlay flag
 <t> add tmpfs flag
 <m> add custom mount opts (Not working)
-<z> add squashfs flag (TODO)
 
 <ENTER> boot @root\n\n"
 
@@ -137,20 +141,60 @@ run_latehook() {
 		fi
 
 
-		if [[ "$key" = 'o' ]]; then
+		if [[ "$key" = 'z' ]]; then
+			
+			echo -e "\nEnter a source to create from.
+(eg., '/', '/@root', '/.snapshots/first')\n"
+
+			read squashSource
+		
+			cd $mnt$squashSource
+
+			mksquashfs . $mnt$squashPath$squashFile -noappend -no-recovery -mem-percent 20 -comp lz4 -e root.squashfs -e "$squashPath$squashFile" -e boot/ -e efi/ -e home/user/.cache/ -e home/user/.local/share/Trash/ -e dev/ -e var/cache/pacman/ -e run/timeshift/ -e proc/ -e sys/ -e tmp/ -e run/ -e mnt/ -e $snapshot_dir/* -e var/tmp/ -e var/log/ -e var/lib/systemd/random-seed -e root/.cache/*
+			
+			sleep 1
+
+   		ls -lah $mnt$squashPath$squashFile
+		
+		elif [[ "$key" = 'x' ]]; then
+
+			if [ $tmpfsFlag = 'true' ]; then
+				
+				echo -e "\nExtracting archive to RAM. Please be patient...\n"
+				mount -t tmpfs -o size=80% none $new_root
+				unsquashfs -d $new_root -f $mnt$squashPath$squashFile
+			
+			elif [ $overlayFlag = 'true' ]; then
+				
+				error "Feature currently not working with overlay flag. Try removing the overlay flag and adding the tmpfs flag."
+
+				mount --type="squashfs" --options="loop" --source="$mnt$squashPath$squashFile" --target="$new_root"
+			
+				create_overlay
 	
-			echo "overlay flag enabled."
-			overlayFlag='true'
+			fi
 	
+			mount --mkdir --bind -o "$mountOpts" "$mnt$snapshot_dir" "$new_root$snapshot_dir"
+
+			finished=true
+
+		elif [[ "$key" = 'o' ]]; then
+	
+			[ $overlayFlag = 'true' ] && overlayFlag='false' || overlayFlag='true'
+			
+			echo "overlayFlag=$overlayFlag"
+
 		elif [[ "$key" = 'w' ]]; then
 			
-			echo "ro to rw flag enabled."
-			rorwFlag='true'
+			[ $rorwFlag = 'true' ] && rorwFlag='false' || rorwFlag='true'
+			
+			echo "rorwFlag=$rorwFlag"
 
 		elif [[ "$key" = 't' ]]; then
 			
-			echo "tmpfs flag enabled."
-			tmpfsFlag='true'
+			[ $tmpfsFlag = 'true' ] && tmpfsFlag='false' || tmpfsFlag='true'
+			
+			echo "tmpfsFlag=$tmpfsFlag"
 	
 		elif [[ "$key" = 'm' ]]; then
 		
@@ -261,6 +305,13 @@ run_latehook() {
 		elif [[ "$key" = '' ]]; then  # ie., <ENTER> was pressed
 			
 			boot $root
+
+		elif [[ "$key" = 'q' ]]; then
+
+			echo "Exiting."
+			finished=true
+
+			sleep 1
 		
 		else
 
