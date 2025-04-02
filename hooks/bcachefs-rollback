@@ -16,6 +16,8 @@ mnt=/mnt
 temp="$mnt/temp"			# Used for changing from ro to rw
 squashPath='/'
 squashFile='root.squashfs'
+efiPartNum='1'			# What partition is efi on? (leave blank to not mount)
+bootPartNum='2'		# What partition is boot on? (leave blank to not mount)
 
 # Useful file: /usr/lib/initcpio/init
 
@@ -99,6 +101,7 @@ run_latehook() {
 
 	# Automatically find the proper root partition which was booted
 	root_part=$(mount | grep ${new_root} | sed "s# on ${new_root}.*##")
+	disk=$(mount | grep ${new_root} | sed "s#[0-9] on ${new_root}.*##")
 
 	# System pre-mounted, but we want to mount the systems differently
 	umount ${new_root}
@@ -147,12 +150,17 @@ run_latehook() {
 (eg., '/', '/@root', '/.snapshots/first')\n"
 
 			read squashSource
-		
+
+			[ $efiPartNum ] && mount --mkdir $disk$efiPartNum $mnt/efi
+			[ $bootPartNum ] && mount --mkdir $disk$bootPartNum $mnt/boot
+			
 			cd $mnt$squashSource
 
-			# Won't work in overlay mode without sys,dev, and proc directories
-			mksquashfs . $mnt$squashPath$squashFile -noappend -no-recovery -mem-percent 20 -comp lz4 -e root.squashfs -e "$squashPath$squashFile" -e boot/ -e efi/ -e home/user/.cache/ -e home/user/.local/share/Trash/ -e var/cache/pacman/ -e run/timeshift/ -e tmp/ -e run/ -e mnt/ -e $snapshot_dir/* -e var/tmp/ -e var/log/ -e var/lib/systemd/random-seed -e root/.cache/*
-			
+			mksquashfs . $mnt$squashPath$squashFile -noappend -no-recovery -mem-percent 20 -comp lz4 -e root.squashfs -e "$squashFile" -e home/user/.cache/ -e home/user/.local/share/Trash/ -e mnt/ -e var/cache/pacman/ -e .snapshots/*
+
+			[ $efiPartNum ] && umount $mnt/efi
+			[ $bootPartNum ] && umount $mnt/boot
+
 			sleep 1
 
    		ls -lah $mnt$squashPath$squashFile
@@ -168,13 +176,11 @@ run_latehook() {
 			elif [ $overlayFlag = 'true' ]; then
 
 				mount -t squashfs -o loop --source "$mnt$squashPath$squashFile" --target "$new_root/"
-			
 				create_overlay
 			
 			else
-
-				error "Feature currently requires either overlay or tmpfs flag to work."
-				continue
+				
+				mount -t squashfs -o loop --source "$mnt$squashPath$squashFile" --target "$new_root/"
 
 			fi
 	
