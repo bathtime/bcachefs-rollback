@@ -11,8 +11,8 @@ This program is a mkinitcpio hook that allows booting into snapshots and rollbac
 
 # Features:
 
-- Easily boot snapshots, main /, or another directory
-- Recover root snapshots
+- Easily boot snapshots, main root /, @root, or another directory
+- Recover root snapshots instantly
 - Mount any boot circumstance in tmpfs or overlay mode (squashfs functionality coming soon!)
 - Turn a r/o snapshot into a r/w snapshot on the fly
 
@@ -76,6 +76,7 @@ What would you like to do?
 <s> boot into a snapshot
 <r> restore snapshot
 <b> boot root system
+<n> create @root snapshot from /
 <d> delete root system
 <c> boot custom dir
 <e> enter bash
@@ -89,23 +90,24 @@ What would you like to do?
 <ENTER> boot @root
 ```
 
-Choose the 'boot root system' menu option. This will boot you into your regular system. If all is okay, make a snapshot for your / drive (the snapshot may be r/o as shown below):
-
-```
-bcachefs subvolume snapshot -r / /.snapshots/initial
-```
-
-Then restart your computer and choose the 'create @root snapshot from /' option from the booting menu. This will use your root system '/' to create a subvolume called @root. It will for now on be where your main system will be located. Press ENTER to boot into @root. You can also boot into @root by simply allowing the the menu timeout.
+First boot into your regular root drive (/) by selecting 'boot root system'. Make sure your computer is working as it should. If all is well, restart your computer and choose the 'create @root snapshot from /' option from the booting menu. This will create a snapshot of your root system (ie., /) called '/@root', which will for now on be where your main system will be located. Such a setup will allow for easy rollback functionality and other features. Press ENTER to boot into the @root subvolume.
 
 # Running the program:
 
-From now on when the computer boots up to the bcachefs-rollback menu you may either wait 15 seconds for the menu to timeout (will boot into /@root) or just press the ENTER key to immidiately boot into /@root.
+Having created the @root subvolume, bcachefs-rollback will automatically boot into it if the menu is allowed to time out (after 2 seconds) or if the ENTER key is pressed whilst in the menu.
 
-If all is okay and you'd like to get rid of the residual files on your original / drive (which can be accessed by choosing the 'boot root system' option in the boot menu), choose the 'delete root system' option. This is experimental! If everything checks out, all except /.snapshots and /@root should remain. At this point all your system files will be in /@root.
+If the @root subvolume boots without error, you may want to delete the residual files on your original / drive. Do so by choosing the 'delete root system' option. If everything checks out, all except /.snapshots and /@root should remain. At this point all your system files will be in /@root.
+
+# Extra features
+
+You may wish to boot into an overlay filesystem if you're booting a read only subvolume. Simply select the 'add overlay flag' and then make your selection of what to boot. The same goes for the 'add tmpfs flag' option. That said, it should be known that these modes have no effect on separate partitions, such as /boot and /efi.
+
+For a more permanent solution, choose the 'add ro -> rw flag' if you'd like to transform a read only snapshot to a read/write snapshot.
 
 # TODO
 
-- Find a way to easily select snapshots within the menu. ATM they must be fully typed out.
+- Find a way to easily select snapshots within the menu. Currently, they must be fully typed out.
+- Implement squashfs functionality
 
 # Bugs
 
