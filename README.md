@@ -51,12 +51,18 @@ Copy the bcachefs-rollback install file to /usr/lib/initcpio/install/
 
 .
 
-Edit /etc/mkinitcpio.conf to include the 'bcachefs-rollback' hook and 'bcachefs' module. Your system's hooks may look different, but just make sure that you add the 'bcachefs-rollback' hook after the 'filesystems' hook (I'm not 100% sure where this hook should go, but this seems to work for me):
+Edit /etc/mkinitcpio.conf to include the 'bcachefs-rollback' hook and 'bcachefs' and 'squashfs' modules. Your system's hooks may look different, but just make sure that you add the 'bcachefs-rollback' hook after the 'filesystems' hook:
 
 ```
 MODULES=(bcachefs)
 
 HOOKS=(base udev autodetect microcode modconf keyboard block filesystems bcachefs-rollback)
+```
+
+You'll need to install the 'squashfs-tools' package and add 'squashfs' to modules to make use of squashfs functionality.
+
+```
+MODULES=(bcachefs squashfs)
 ```
 
 Update initramfs with:
