@@ -273,6 +273,34 @@ run_latehook() {
 	
 			if [ -d "$mnt$snapshot_dir/$snapshot" ]; then
 			
+				if [ -d "$mnt$root" ]; then
+					bcachefs subvolume delete $mnt$root
+					sleep 1
+					sync
+					sleep 1
+				fi
+
+				mv "$mnt$snapshot_dir/$snapshot/" $mnt$root/
+				echo -e "\n'$snapshot' recovered to @root.\n"
+					
+			else
+			
+				error "The snapshot '$snapshot' does not exist."
+
+			fi
+
+		elif [[ "$key" = 'R' ]]; then
+
+			echo -e "\nType the name of the snapshot you would like to recover to @root.\n"
+		
+			ls "$mnt$snapshot_dir"
+
+			echo
+
+			read snapshot
+	
+			if [ -d "$mnt$snapshot_dir/$snapshot" ]; then
+			
 				if [ -d "$mnt$snapshot_dir$root-old" ]; then
 					bcachefs subvolume delete "$mnt$snapshot_dir$root-old"
 				fi
@@ -280,6 +308,9 @@ run_latehook() {
 				if [ -d "$mnt$root" ]; then
 					bcachefs subvolume snapshot "$mnt$root" "$mnt$snapshot_dir$root-old"
 					bcachefs subvolume delete $mnt$root
+					sleep 1
+					sync
+					sleep 1
 				fi
 
 				bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" $mnt$root
