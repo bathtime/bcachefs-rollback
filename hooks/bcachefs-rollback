@@ -10,7 +10,7 @@
 root='/@root'
 
 snapshot_dir=/.snapshots
-mountOpts='noatime'
+mountOpts='noatime,fix_errors'
 new_root=/new_root
 mnt=/mnt
 temp="$mnt/temp"			# Used for changing from ro to rw
@@ -106,7 +106,10 @@ run_latehook() {
 	# System pre-mounted, but we want to mount the systems differently
 	umount ${new_root}
 
-	mount --mkdir -t bcachefs ${root_part} ${mnt}
+	mkdir -p $mnt
+
+	echo bcachefs mount -o "$mountOpts" ${root_part} ${mnt}
+	bcachefs mount -o "$mountOpts" ${root_part} ${mnt}
 	
 	echo -e "\nPress any key for bcachefs rollback.\n"
 
@@ -123,6 +126,7 @@ run_latehook() {
 
 <s> boot into a snapshot
 <r> restore snapshot
+<R> restore snapshot (uses mv command)
 <b> boot root system
 <n> create @root snapshot from /
 <d> delete root system
@@ -261,7 +265,7 @@ run_latehook() {
 
 			boot /
 
-		elif [[ "$key" = 'r' ]]; then
+		elif [[ "$key" = 'R' ]]; then
 
 			echo -e "\nType the name of the snapshot you would like to recover to @root.\n"
 		
@@ -289,7 +293,7 @@ run_latehook() {
 
 			fi
 
-		elif [[ "$key" = 'R' ]]; then
+		elif [[ "$key" = 'r' ]]; then
 
 			echo -e "\nType the name of the snapshot you would like to recover to @root.\n"
 		
