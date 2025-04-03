@@ -104,12 +104,15 @@ run_latehook() {
 	disk=$(mount | grep ${new_root} | sed "s#[0-9] on ${new_root}.*##")
 
 	# System pre-mounted, but we want to mount the systems differently
+	bcachefs fsck -p ${root_part}
 	umount ${new_root}
 
 	mkdir -p $mnt
 
 	echo bcachefs mount -o "$mountOpts" ${root_part} ${mnt}
+
 	bcachefs mount -o "$mountOpts" ${root_part} ${mnt}
+	#bcachefs fsck -p ${root_part}
 	
 	echo -e "\nPress any key for bcachefs rollback.\n"
 
