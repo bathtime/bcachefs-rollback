@@ -192,6 +192,34 @@ run_latehook() {
 
 			finished=true
 
+		elif [[ "$key" = 'y' ]]; then
+
+			echo -e "\nType the path you'd like to restore.\n"
+
+			read restorePath
+			
+			#[ -d "$new_root" ] && bcachefs subvolume delete "$new_root"
+
+			mount -t squashfs -o loop --source "$mnt$squashPath$squashFile" --target "$new_root"
+		
+			if [ ! "$mnt$restorePath" = '/' ] && [ -d "$mnt$restorePath" ]; then
+				echo "Deleting subvolume in current path..."
+				bcachefs subvolume delete "$mnt$restorePath"
+				rm -rf "$mnt$restorePath"
+			fi
+			
+			mkdir -p "$mnt$restorePath"
+
+			
+			cd "$new_root"
+			echo -e "\nCopying:  cp -a . $mnt$restorePath/... Please be patient.\n"
+
+			cp -a . "$mnt$restorePath/"
+
+			umount "$new_root"
+			
+			echo "All done"
+
 		elif [[ "$key" = 'o' ]]; then
 	
 			[ $overlayFlag = 'true' ] && overlayFlag='false' || overlayFlag='true'
