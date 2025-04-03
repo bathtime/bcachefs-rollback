@@ -118,7 +118,7 @@ For a more permanent solution, choose the 'add ro -> rw flag' if you'd like to t
 
 # Bugs
 
-- SquashFS currently not working alone or with overlay flag (works with tmpfs flag) [FIXED - working with overlay flag now. You must add 'squashfs' to modules in /etc/mkinitcpio.conf]
+- SquashFS currently not working alone or with overlay flag (works with tmpfs flag) [FIXED - working alone or with overlay flag now. You must add 'squashfs' to modules in /etc/mkinitcpio.conf]
 - The first restore (before /@root is created) will result in a small error when the system attempts to move a non-existant backup snapshot of /@root to /.snapshots [FIXED]
 - Custom mount opts not working. Could be overriden by /etc/fstab?
 - Label has to be manually entered. [FIXED - now it's automatic]
