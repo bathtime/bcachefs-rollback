@@ -104,8 +104,8 @@ run_latehook() {
 	disk=$(mount | grep ${new_root} | sed "s#[0-9] on ${new_root}.*##")
 
 	# System pre-mounted, but we want to mount the systems differently
-	bcachefs fsck -p ${root_part}
 	umount ${new_root}
+	bcachefs fsck -p ${root_part}
 
 	mkdir -p $mnt
 
