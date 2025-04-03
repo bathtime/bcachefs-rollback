@@ -106,6 +106,7 @@ run_latehook() {
 	# System pre-mounted, but we want to mount the systems differently
 	umount ${new_root}
 	bcachefs fsck -p ${root_part}
+	echo 'bcachefs fsck -p > $mnt/log_file.txt 2>&1'
 
 	mkdir -p $mnt
 
