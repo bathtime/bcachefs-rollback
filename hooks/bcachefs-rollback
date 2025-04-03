@@ -52,7 +52,7 @@ boot() {
 	else
 
 		error "No system found at $1."
-		
+		showMenu=true		
 	fi
 
 }
