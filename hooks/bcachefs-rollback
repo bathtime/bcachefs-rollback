@@ -111,17 +111,28 @@ run_latehook() {
 
 	mkdir -p $mnt
 
-	echo bcachefs mount -o "$mountOpts" ${root_part} ${mnt}
-
-	bcachefs mount -o "$mountOpts" ${root_part} ${mnt}
-	#bcachefs fsck -p ${root_part}
 	
-	echo -e "\nPress any key for bcachefs rollback.\n"
+#	echo -e "\nPress 'f' to run fsck on disk.\n"
+#	[ $(read -sn1 -t 1 && echo 1) ] && bcachefs fsck -p ${root_part}
 
 	finished=false
 	showMenu=false
 
-	[ $(read -sn1 -t 2 && echo 1) ] && showMenu=true
+	echo -e "\nPress any key for bcachefs rollback.\n"
+	
+	read -sn1 -t2 key
+
+	[ ! $key = '' ] && showMenu=true
+	
+	if [ $key = 'f' ]; then
+		echo bcachefs fsck -p ${root_part}
+		bcachefs fsck -p ${root_part}
+	fi
+	
+	echo bcachefs mount -o "$mountOpts" ${root_part} ${mnt}
+	bcachefs mount -o "$mountOpts" ${root_part} ${mnt}
+	
+	#[ $(read -sn1 -t 2 && echo 1) ] && showMenu=true
 
 	while [ ! "$finished" = 'true' ]; do
 
@@ -340,10 +351,16 @@ run_latehook() {
 			
 				if [ -d "$mnt$snapshot_dir$root-old" ]; then
 					bcachefs subvolume delete "$mnt$snapshot_dir$root-old"
+					sleep 1
+					sync
+					sleep 1
 				fi
 
 				if [ -d "$mnt$root" ]; then
 					bcachefs subvolume snapshot "$mnt$root" "$mnt$snapshot_dir$root-old"
+					sleep 1
+					sync
+					sleep 1
 					bcachefs subvolume delete $mnt$root
 					sleep 1
 					sync
