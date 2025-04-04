@@ -105,7 +105,8 @@ run_latehook() {
 
 	# System pre-mounted, but we want to mount the systems differently
 	umount ${new_root}
-	bcachefs fsck -p ${root_part}
+	echo 'bcachefs fsck -p ${root_part}'
+#	bcachefs fsck -p ${root_part}
 	echo 'bcachefs fsck -p > $mnt/log_file.txt 2>&1'
 
 	mkdir -p $mnt
@@ -136,6 +137,7 @@ run_latehook() {
 <d> delete root system
 <z> create squashfs
 <x> run squashfs
+<y> restore squashfs
 <c> boot custom dir
 <e> enter bash
 <q> quit
@@ -202,24 +204,22 @@ run_latehook() {
 
 			read restorePath
 			
-			#[ -d "$new_root" ] && bcachefs subvolume delete "$new_root"
-
 			mount -t squashfs -o loop --source "$mnt$squashPath$squashFile" --target "$new_root"
 		
-			if [ ! "$mnt$restorePath" = '/' ] && [ -d "$mnt$restorePath" ]; then
+			#if [ ! "$mnt$restorePath" = '/' ] && [ -d "$mnt$restorePath" ]; then
+			if [ "$mnt$restorePath" = "$root" ] && [ -d "$mnt$restorePath" ]; then
 				echo "Deleting subvolume in current path..."
 				bcachefs subvolume delete "$mnt$restorePath"
 				rm -rf "$mnt$restorePath"
 			fi
 			
 			mkdir -p "$mnt$restorePath"
-
+			echo -e "\nCopying:  cp -a . $mnt$restorePath/... Please be patient.\n"
 			
 			cd "$new_root"
-			echo -e "\nCopying:  cp -a . $mnt$restorePath/... Please be patient.\n"
-
 			cp -a . "$mnt$restorePath/"
 
+			cd /
 			umount "$new_root"
 			
 			echo "All done"
