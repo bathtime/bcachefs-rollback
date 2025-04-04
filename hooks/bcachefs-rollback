@@ -199,6 +199,8 @@ run_latehook() {
 			finished=true
 
 		elif [[ "$key" = 'y' ]]; then
+			
+			ls ${mnt} "$mnt$snapshot_dir"
 
 			echo -e "\nType the path you'd like to restore.\n"
 
@@ -206,7 +208,6 @@ run_latehook() {
 			
 			mount -t squashfs -o loop --source "$mnt$squashPath$squashFile" --target "$new_root"
 		
-			#if [ ! "$mnt$restorePath" = '/' ] && [ -d "$mnt$restorePath" ]; then
 			if [ "$mnt$restorePath" = "$root" ] && [ -d "$mnt$restorePath" ]; then
 				echo "Deleting subvolume in current path..."
 				bcachefs subvolume delete "$mnt$restorePath"
