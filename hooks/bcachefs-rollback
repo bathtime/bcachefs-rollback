@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/ash
 
 
 # $root (or /@root) will be where all the system files are stored once you've made
@@ -12,6 +12,7 @@ root='/@root'
 snapshot_dir=/.snapshots
 mountOpts='noatime,fix_errors'
 new_root=/new_root
+user=user
 mnt=/mnt
 temp="$mnt/temp"			# Used for changing from ro to rw
 squashPath='/'
@@ -127,7 +128,8 @@ run_latehook() {
 
 <s> boot into a snapshot
 <r> restore snapshot
-<R> restore snapshot (uses mv command)
+<R> restore snapshot (uses mv)
+<u> restore snapshot (uses rysnc)
 <b> boot root system
 <n> create @root snapshot from /
 <d> delete root system
@@ -151,7 +153,39 @@ run_latehook() {
 		fi
 
 
-		if [[ "$key" = 'f' ]]; then
+		if [[ "$key" = 'u' ]]; then
+		
+			echo -e "\nEnter a source.
+(eg., '/', '/@root', '/.snapshots/first')\n"
+
+			read Source
+	
+			echo -e "\nEnter a target.
+(eg., '/', '/@root', '/.snapshots/first')\n"
+
+			read Target
+
+			mkdir -p "$mnt$Target"
+
+			rsync_params="-axHAXSW --del --exclude=/lost+found/ --exclude=/dev/ --exclude=/proc/ --exclude=/sys/ --exclude=/tmp/ --exclude=/run/ --exclude=/var/tmp/ --exclude=/var/lib/dhcpcd/ --exclude=/var/log/ --exclude=/var/lib/systemd/random-seed --exclude=/root/.cache/ --exclude=/boot/ --exclude=/efi/ --exclude=/media/ --exclude=/mnt/ --exclude=/home/$user/.cache/ --exclude=/home/$user/.local/share/Trash/ --exclude=$mnt/ --exclude=$snapshot_dir/"
+
+
+			rsync --dry-run -v $rsync_params "$mnt$Source" "$mnt$Target" | less
+
+
+   		read -p "Type 'y' to proceed with rsync or any other key to exit..." choice
+
+   		if [[ $choice = 'y' ]]; then
+
+      		rsync --info=progress2 $rsync_params "$mnt$Source" "$mnt$Target"
+				
+				echo "Sync finished."
+   		
+			else
+      		echo "Exiting."
+   		fi
+
+		elif [[ "$key" = 'f' ]]; then
 			
 			echo 'To save logs run: bcachefs fsck -p > $mnt/log_file.txt 2>&1'
 			echo bcachefs fsck -p ${root_part}
@@ -169,7 +203,7 @@ run_latehook() {
 			
 			cd $mnt$squashSource
 
-			mksquashfs . $mnt$squashPath$squashFile -noappend -no-recovery -mem-percent 20 -comp lz4 -e root.squashfs -e "$squashFile" -e home/user/.cache/ -e home/user/.local/share/Trash/ -e mnt/ -e var/cache/pacman/ -e .snapshots/*
+			mksquashfs . $mnt$squashPath$squashFile -noappend -no-recovery -mem-percent 20 -comp lz4 -e root.squashfs -e "$squashFile" -e home/$user/.cache/ -e home/$user/.local/share/Trash/ -e mnt/ -e var/cache/pacman/ -e .snapshots/*
 
 			[ $efiPartNum ] && umount $mnt/efi
 			[ $bootPartNum ] && umount $mnt/boot
