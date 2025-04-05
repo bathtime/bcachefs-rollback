@@ -377,20 +377,11 @@ run_latehook() {
 			
 				if [ -d "$mnt$snapshot_dir$root-old" ]; then
 					bcachefs subvolume delete "$mnt$snapshot_dir$root-old"
-					sleep 1
-					sync
-					sleep 1
 				fi
 
 				if [ -d "$mnt$root" ]; then
 					bcachefs subvolume snapshot "$mnt$root" "$mnt$snapshot_dir$root-old"
-					sleep 1
-					sync
-					sleep 1
 					bcachefs subvolume delete $mnt$root
-					sleep 1
-					sync
-					sleep 1
 				fi
 
 				bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" $mnt$root
