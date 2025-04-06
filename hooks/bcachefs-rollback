@@ -7,9 +7,9 @@
 # (with the exception of .snapshots and @root) by issuing the 'delete root system'
 # option in the menu.
 
-root='/@root'
 
 snapshot_dir=/.snapshots
+root="$snapshots_dir/@root"
 mountOpts='noatime,fix_errors'
 new_root=/new_root
 user=user
@@ -146,7 +146,7 @@ run_latehook() {
 <t> add tmpfs flag
 <m> add custom mount opts (Not working)
 
-<ENTER> boot @root\n\n"
+<ENTER> bboot @root\n\n"
 
 			read -sn 1 key
 
@@ -296,10 +296,10 @@ run_latehook() {
 
 				if [ ! -d "$mnt$root" ]; then
 
-					bcachefs subvolume snapshot "$mnt" "$mnt$root" && echo "@root snapshot created."	
+					bcachefs subvolume snapshot "$mnt" "$mnt$root" && echo "$root snapshot created."	
 				else
 				
-					error "There is already a @root created."
+					error "There is already a $root created."
 
 				fi
 		
@@ -337,7 +337,7 @@ run_latehook() {
 
 		elif [[ "$key" = 'R' ]]; then
 
-			echo -e "\nType the name of the snapshot you would like to recover to @root.\n"
+			echo -e "\nType the name of the snapshot you would like to recover to $root.\n"
 		
 			ls "$mnt$snapshot_dir"
 
@@ -355,7 +355,7 @@ run_latehook() {
 				fi
 
 				mv "$mnt$snapshot_dir/$snapshot/" $mnt$root/
-				echo -e "\n'$snapshot' recovered to @root.\n"
+				echo -e "\n'$snapshot' recovered to $root.\n"
 					
 			else
 			
@@ -365,7 +365,7 @@ run_latehook() {
 
 		elif [[ "$key" = 'r' ]]; then
 
-			echo -e "\nType the name of the snapshot you would like to recover to @root.\n"
+			echo -e "\nType the name of the snapshot you would like to recover to $root.\n"
 		
 			ls "$mnt$snapshot_dir"
 
@@ -384,8 +384,9 @@ run_latehook() {
 					bcachefs subvolume delete $mnt$root
 				fi
 
+				echo bcaches subvolume snapshot "$mnt$snapshot_dir/$snapshot" $mnt$root
 				bcachefs subvolume snapshot "$mnt$snapshot_dir/$snapshot" $mnt$root
-				echo -e "\n'$snapshot' recovered to @root.\n"
+				echo -e "\n'$snapshot' recovered to $root.\n"
 					
 			else
 			
@@ -404,19 +405,20 @@ run_latehook() {
 			# You must keep .snapshots and @root in / or the system won't start
 			if [ -d $mnt$root/etc ]; then
 
-				echo "Deleting / (excepting .snapshots and @root)..."
+				echo "Deleting / (excepting .snapshots and $root)..."
 			
 				rm -rf /mnt/bin /mnt/boot /mnt/dev /mnt/efi /mnt/etc /mnt/home /mnt/lib /mnt/lib64 /mnt/'lost+found' /mnt/opt /mnt/proc /mnt/root /mnt/run /mnt/sbin /mnt/srv /mnt/sys /mnt/tmp /mnt/usr /mnt/var
 			
 			else
 			
-				error "No system located at @root. Will not delete main system."
+				error "No system located at $root. Will not delete main system."
 		
 			fi
 
 		elif [[ "$key" = '' ]]; then  # ie., <ENTER> was pressed
 			
-			boot $root
+			echo boot "$root"
+			boot "$root"
 
 		elif [[ "$key" = 'q' ]]; then
 
